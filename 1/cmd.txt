@@ -1,0 +1,18 @@
+docker build -t my-ubuntu-image .
+docker run -it my-ubuntu-image
+
+python3 np2pd.py
+
+gcc -o hello csine.c -lm
+./hello
+
+cd ml-latest-small
+
+# คัดกรอง ratings ที่ให้คะแนน 0.5 และเรียงตาม movieID
+grep ",0.5," ratings.csv | sort -t, -k2n > filtered_ratings.csv
+
+# แสดงส่วนตัวอย่างของไฟล์ที่ถูกคัดกรองมา 15 บรรทัดแรก
+head -n 15 filtered_ratings.csv
+
+# แสดงส่วนสุดท้ายของไฟล์ที่ถูกคัดกรองมา 15 บรรทัด
+tail -n 15 filtered_ratings.csv
