@@ -8,31 +8,38 @@
 #define PROCTIME 30
 
 int main() {
+    pid_t pid;
     int i;
 
     for (i = 0; i < MAX; i++) {
-        pid_t child_pid = fork();
+        pid = fork();
 
-        if (child_pid < 0) {
-            perror("Fork failed");
-            exit(1);
-        } else if (child_pid == 0) { // Child process
-            printf("Child(%d) PID %d\n", i, getpid());
-            printf("Child(%d) Parent's PID %d\n", i, getppid());
-            sleep(PROCTIME); // Sleep for 30 seconds
-            exit(0);
+        if (pid < 0) {
+            // Fork failed
+            perror("fork");
+            exit(EXIT_FAILURE);
+        } else if (pid == 0) {
+            // Child process
+            printf("Child(%2d) PID %5d       PPID %5d, about to terminate in %d sec.\n", i, getpid(), getppid(), PROCTIME);
+            sleep(PROCTIME); // Child will sleep for PROCTIME seconds
+            exit(EXIT_SUCCESS);
+        } else {
+            // Parent process
+            sleep(1); // Sleep 1 second before spawning next child
         }
     }
 
-    // Parent process
     for (i = 0; i < MAX; i++) {
-        int status;
-        wait(&status);
+        wait(NULL);
         printf("Parent: I see my child #%d completed.\n", i);
     }
 
-    printf("PPID %d, about to terminate in %d sec.\n", getpid(), PROCTIME);
-    sleep(PROCTIME); // Sleep for another 30 seconds before termination
+
+    // After spawning all children, the parent will run the top command
+    printf("\n\nDisplaying output of 'top' command...\n\n");
+    system("top -n 1"); // Runs 'top' command with 1 iteration
+
+
 
     return 0;
 }
